@@ -7,11 +7,8 @@
 #
 ##########################################################################
 
-import logging
 from odoo import api, fields, models
 from odoo.exceptions import UserError
-
-_logger = logging.getLogger(__name__)
 
 
 Carrier_Code = [
@@ -36,9 +33,9 @@ class StockPicking(models.Model):
         string='Ecomm Shipment',
         help="Contains Ecomm Order Shipment Number (eg. 300000008)")
 
-    def action_done(self):
+    def _action_done(self):
         self.skeleton_pre_shipment()
-        res = super().action_done()
+        res = super()._action_done()
         self.skeleton_post_shipment(res)
         return res
 
@@ -66,7 +63,7 @@ class StockPicking(models.Model):
         ecomm_cannels = dict(self.env['connector.snippet']._get_ecomm_extensions()).keys()
         for picking_obj in self:
             sale_order = picking_obj.sale_id
-            track_vals = picking.get_tracking_data()
+            track_vals = picking_obj.get_tracking_data()
             if track_vals:
                 track_vals['ecom_shipment'] = picking_obj.ecomm_shipment
                 for ecomm in ecomm_cannels:

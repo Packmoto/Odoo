@@ -7,22 +7,13 @@
 #
 ##########################################################################
 
-import logging
 from odoo import http,fields
 from odoo.http import request
 from odoo.osv import expression
 
-_logger = logging.getLogger(__name__)
 
 class OnboardingController(http.Controller):
 
-    # @http.route('/bridge_skeleton/bridge_skeleton_dashboard_onboarding', auth='user', type='json')
-    # def connector_dashboard_onboarding(self):
-    #     connectInfo = request.env['connector.dashboard'].get_connection_info()
-    #     return {
-    #         'html': request.env.ref('bridge_skeleton.bridge_skeleton_dashboard_onboarding_panel').render({
-    #             'connrecs': connectInfo})
-    #     }
 
 
     @http.route('/bridge_skeleton/infos', type='json', auth='user')
@@ -75,7 +66,6 @@ class OnboardingController(http.Controller):
     @http.route('/bridge_skeleton/get_instance_id', type='json', auth='user')
     def get_instance_id(self):
         instance_id = request.env['connector.dashboard'].sudo().get_instance()
-        _logger.info("===============instance_id===================%r",instance_id)
         if instance_id:
             return instance_id
         return False

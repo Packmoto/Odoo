@@ -113,7 +113,7 @@ class WkSkeleton(models.TransientModel):
             order_line_id = self.env['sale.order.line'].create(order_line_data)
         except Exception as e:
             statusMessage = "Error in creating order Line on Odoo: %s" % str(e)
-            _logger.info('## Exception create_sale_order_line for sale.order(%s) : %s' 
+            _logger.debug('## Exception create_sale_order_line for sale.order(%s) : %s' 
                 % (order_line_data('order_id'), statusMessage))
             status = False
         finally:

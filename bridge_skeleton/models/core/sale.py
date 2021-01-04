@@ -22,7 +22,7 @@ class SaleOrder(models.Model):
 
     def _invoiced_status_compute(self):
         for sale_obj in self:
-            sale_obj.is_invoiced = True if any(invoice_id.state == 'posted' for invoice_id in sale_obj.invoice_ids) else False
+            sale_obj.is_invoiced = True if sale_obj.invoice_ids and all(invoice_id.state == 'posted' for invoice_id in sale_obj.invoice_ids) else False
 
     _ecommerce_selection = lambda self, * \
         args, **kwargs: self.env['connector.snippet']._get_ecomm_extensions(*args, **kwargs)

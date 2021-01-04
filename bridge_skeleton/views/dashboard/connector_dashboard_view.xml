@@ -60,11 +60,11 @@
                             <div class="o_kanban_card_header_title">
                                 <div class="row container">
                                     <div class='col-1'>
-                                        <t t-if="itmetype == 'product'"><i class='fa fa-cube'/></t>
-                                        <t t-if="itmetype == 'category'"><i class='fa fa-sitemap'/></t>
-                                        <t t-if="itmetype == 'order'"><i class='fa fa-file-text-o'/></t>
-                                        <t t-if="itmetype == 'attribute'"><i class='fa fa-file-picture-o'/></t>
-                                        <t t-if="itmetype == 'partner'"><i class='fa fa-handshake-o'/></t>
+                                        <t t-if="itmetype == 'product'"><i class='fa fa-cube' aria-label="Product" role="img" title="Product"/></t>
+                                        <t t-if="itmetype == 'category'"><i class='fa fa-sitemap' aria-label="Category" role="img" title="Category"/></t>
+                                        <t t-if="itmetype == 'order'"><i class='fa fa-file-text-o' aria-label="Order" role="img" title="Order"/></t>
+                                        <t t-if="itmetype == 'attribute'"><i class='fa fa-file-picture-o' aria-label="Attribute" role="img" title="Attribute"/></t>
+                                        <t t-if="itmetype == 'partner'"><i class='fa fa-handshake-o' aria-label="Partner" role="img" title="Partner"/></t>
                                     </div>
                                     <div class="o_primary col-11">
                                         <a type="object" name="open_action" class="field_name"><field name="name"/></a>

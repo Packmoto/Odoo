@@ -7,7 +7,17 @@
 #
 ##########################################################################
 
+import base64
+import csv
+import io
+import json
+import operator
+import zipfile
+from datetime import date
+
 from odoo import api, fields, models
+from odoo.addons.web.controllers.main import GroupsTreeNode
+from odoo.tools import pycompat
 
 
 class SynchronizationWizard(models.TransientModel):
@@ -162,3 +172,98 @@ class SynchronizationWizard(models.TransientModel):
         record_objs = self.env[model].search(domain)
         if record_objs:
             record_objs.unlink()
+
+    def from_data(self, fields, rows):
+        fp = io.BytesIO()
+        writer = pycompat.csv_writer(fp, quoting=1)
+
+        writer.writerow(fields)
+
+        for data in rows:
+            row = []
+            for d in data:
+                # Spreadsheet apps tend to detect formulas on leading =, + and -
+                if isinstance(d, str) and d.startswith(('=', '-', '+')):
+                    d = "'" + d
+
+                row.append(pycompat.to_text(d))
+            writer.writerow(row)
+
+        return fp.getvalue()
+
+    def base(self, data):
+        params = json.loads(data)
+        model, fields, ids, domain, import_compat = \
+            operator.itemgetter('model', 'fields', 'ids', 'domain', 'import_compat')(params)
+
+        field_names = [f['name'] for f in fields]
+        if import_compat:
+            columns_headers = field_names
+        else:
+            columns_headers = [val['label'].strip() for val in fields]
+
+        Model = self.env[model].with_context(**params.get('context', {}))
+        groupby = params.get('groupby')
+        if not import_compat and groupby:
+            groupby_type = [Model._fields[x.split(':')[0]].type for x in groupby]
+            domain = [('id', 'in', ids)] if ids else domain
+            groups_data = Model.read_group(domain, field_names, groupby, lazy=False)
+
+            # read_group(lazy=False) returns a dict only for final groups (with actual data),
+            # not for intermediary groups. The full group tree must be re-constructed.
+            tree = GroupsTreeNode(Model, field_names, groupby, groupby_type)
+            for leaf in groups_data:
+                tree.insert_leaf(leaf)
+
+            response_data = self.from_group_data(fields, tree)
+        else:
+            Model = Model.with_context(import_compat=import_compat)
+            records = Model.browse(ids) if ids else Model.search(domain, offset=0, limit=False, order=False)
+
+            if not Model._is_an_ordinary_table():
+                fields = [field for field in fields if field['name'] != 'id']
+
+            export_data = records.export_data(field_names).get('datas',[])
+            response_data = self.from_data(columns_headers, export_data)
+            return response_data
+
+    @api.model
+    def get_export_mapping_models_list(self):
+        return [
+            'connector.attribute.mapping', 'connector.option.mapping',
+            'connector.order.mapping', 'connector.partner.mapping', 
+            'connector.category.mapping', 'connector.product.mapping', 'connector.template.mapping'
+        ]
+
+    def export_mapping(self):
+        domain = [('instance_id', '=', self.instance_id.id)]
+        models = self.get_export_mapping_models_list()
+        csv_files = []
+        csv_file_names = []
+        for i in models:
+            # data = self.env[i].search(domain)
+            fields = self.env[i].fields_get_keys()
+            field_list = []
+            for field in fields:
+                field_list.append({ "label":str(field.replace('_', ' ').capitalize()), "name":str(field)})
+            data = {"model":i, "fields":field_list, "ids":False, "domain":[], "import_compat":True}
+            result = self.base(json.dumps(data))
+            csv_files.append(result)
+            csv_file_names.append(i.replace('.', ' ').capitalize()+ '.csv')
+        
+        zipped_file = io.BytesIO()
+        zip_name = "connector-mappings-"+ str(date.today()) 
+        try:
+            with zipfile.ZipFile(zipped_file,'w') as f:
+                for file_name,file in zip(csv_file_names, csv_files):
+                    f.writestr(file_name, file)
+            binary_data = base64.b64encode(zipped_file.getvalue())
+            attachment_id = self.env['ir.attachment'].create({'name': zip_name, 'datas': binary_data, 'type': 'binary'}).id
+        except Exception as e:
+            return self.env['message.wizard'].genrated_message("<h4 class='text-danger'>Failed to generate the zip due to </h4>" + str(e))
+        return {
+             'type' : 'ir.actions.act_url',
+             'url': "/web/content/"+str(attachment_id)+"/"+zip_name+".zip",
+             'target': 'new',
+             'tag': 'reload'
+            }

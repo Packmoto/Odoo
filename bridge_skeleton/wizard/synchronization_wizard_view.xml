@@ -11,7 +11,7 @@
                 <form string="Sync">
                     <group col='4' colspan="2">
                         <field name="instance_id" widget="selection" required='1'/>
-                        <field name="action" invisible="context.get('reset') == True or context.get('attribute') == True"/>
+                        <field name="action" invisible="context.get('reset') == True or context.get('attribute') == True or context.get('export-mapping') == True"/>
                     </group>
                     <footer>
                         <button name="start_attribute_synchronization"
@@ -45,6 +45,12 @@
                                 class="oe_highlight"
                                 confirm="Are you sure you want to Reset All Mappings?"
                                 invisible="not context.get('reset') == True"/>
+                        <button icon="fa-download"
+                                name="export_mapping"
+                                class="oe_highlight wk_sync_button"
+                                string="Export Mapping"
+                                invisible="not context.get('export-mapping') == True"
+                                type="object" />
                         or
                         <button string="Cancel" class='oe_link' special="cancel"/>
                     </footer>
@@ -86,5 +92,14 @@
         <field name="view_id" ref="id_synchronization_wizard_form"/>
         <field name="target">new</field>
         <field name="context">{'reset':True}</field>
+    </record>
+
+    <record id="id_ecom_export_mapping_action" model="ir.actions.act_window">
+        <field name="name">Export Mapping</field>
+        <field name="res_model">synchronization.wizard</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="id_synchronization_wizard_form"/>
+        <field name="target">new</field>
+        <field name="context">{'export-mapping':True}</field>
     </record>
 </odoo>

@@ -66,7 +66,7 @@ class ConnectorSnippet(models.TransientModel):
             return list(set(record_objs) - set(mapped_objs.mapped('name')))
         elif sync_opr == 'update':
             return mapped_objs.filtered(
-                lambda obj: obj.need_sync == 'Yes' and
+                lambda obj: obj.need_sync and
                 int(obj.name.id) in record_objs.ids)
         return []
 
@@ -84,7 +84,7 @@ class ConnectorSnippet(models.TransientModel):
         mapping_data.update(kwargs)
         if channel:
             if hasattr(self, 'create_%s_connector_odoo_mapping' % channel):
-                mapping_data = getattr(self, 'create_%s_connector_odoo_mapping' % channel)(mapping_data , model)
+                mapping_data = getattr(self, 'create_%s_connector_odoo_mapping' % channel)(mapping_data, model)
         self.env[model].create(mapping_data)
         return True
 
@@ -114,6 +114,7 @@ class ConnectorSnippet(models.TransientModel):
             location_objs = connection_obj.warehouse_id if connection_obj.active else self.env['stock.warehouse'].search([], limit=1)
             if location_objs:
                 ctx['inventory_mode'] = True
+                ctx['stock_from'] = connection_obj.ecomm_type
                 self.env['stock.quant'].with_context(ctx).create({
                             'product_id': data.get('product_id'),
                             'location_id': location_objs.lot_stock_id.id,

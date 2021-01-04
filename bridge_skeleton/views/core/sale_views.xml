@@ -5,7 +5,7 @@
 
 <odoo>
     <data>
-    	<record id="webkul_view_inherit_sale_view_bridge_skeleton" model="ir.ui.view">
+        <record id="webkul_view_inherit_sale_view_bridge_skeleton" model="ir.ui.view">
             <field name="name">Sale View Inherited</field>
             <field name="model">sale.order</field>
             <field name="type">form</field>
@@ -14,14 +14,14 @@
                 <field name="date_order" position="attributes">
                     <attribute name="invisible">0</attribute>
                 </field>
-            	<xpath expr="//group[@name='technical']" position="replace">
+                <xpath expr="//group[@name='technical']" position="replace">
                     <group name="technical" colspan="2" class="mb-0">
-	                	<label for="origin"/>
-	                    <div class="oe_inline">
-	                    	<b><field name="ecommerce_channel"  attrs="{'invisible': [('ecommerce_channel', '=', False)]}" class="oe_inline"/></b>
-	                    	<label string="-" for="origin" class="oe_inline" attrs="{'invisible': [('ecommerce_channel', '=', False)]}"/>
-	                        <field name="origin" class="oe_inline"/>
-	                    </div>
+                        <label for="origin"/>
+                        <div class="oe_inline">
+                            <b><field name="ecommerce_channel"  attrs="{'invisible': [('ecommerce_channel', '=', False)]}" class="oe_inline"/></b>
+                            <label string="-" for="origin" class="oe_inline" attrs="{'invisible': [('ecommerce_channel', '=', False)]}"/>
+                            <field name="origin" class="oe_inline"/>
+                        </div>
                       <field name="is_shipped"/>
                       <field name="is_invoiced"/>
                     </group>

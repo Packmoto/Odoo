@@ -11,6 +11,10 @@ access_connector_order_mapping_user,Connector Order User,model_connector_order_m
 access_connector_sync_history_user,Connector History User,model_connector_sync_history,group_connector_user,1,0,0,0
 access_connector_extra_category_user,Connector Extra Category User,model_connector_extra_category,group_connector_user,1,0,0,0
 access_connector_dashboard_user,Connector Dashboard User,model_connector_dashboard,group_connector_user,1,0,0,0
+access_connector_snippet_user,Connector Snippet User,model_connector_snippet,group_connector_user,1,0,0,0
+access_wk_skeleton_user,Wk Skeleton User,model_wk_skeleton,group_connector_user,1,0,0,0
+access_message_wizard_user,Message Wizard User,model_message_wizard,group_connector_user,1,0,0,0
+access_synchronization_wizard_user,Synchronization Wizard Update User,model_synchronization_wizard,group_connector_user,1,0,0,0
 
 
 ,,,,,,,
@@ -25,6 +29,11 @@ access_connector_order_mapping_manager,Connector Order Manager,model_connector_o
 access_connector_sync_history_manager,Connector History Manager,model_connector_sync_history,group_connector_manager,1,1,1,1
 access_connector_extra_category_manager,Connector Extra Category Manager,model_connector_extra_category,group_connector_manager,1,1,1,1
 access_connector_dashboard_manager,Connector Dashboard Manager,model_connector_dashboard,group_connector_manager,1,1,1,1
+access_connector_snippet_manager,Connector Snippet Manager,model_connector_snippet,group_connector_manager,1,1,1,1
+access_wk_skeleton_manager,Wk Skeleton Manager,model_wk_skeleton,group_connector_manager,1,1,1,1
+access_message_wizard_manager,Message Wizard Manager,model_message_wizard,group_connector_manager,1,1,1,1
+access_synchronization_wizard_manager,Synchronization Wizard Update Manager,model_synchronization_wizard,group_connector_manager,1,1,1,1
+
 
 ,,,,,,,
 access_connector_template_mapping_public,Template Mapping Public,model_connector_template_mapping,,1,1,0,0

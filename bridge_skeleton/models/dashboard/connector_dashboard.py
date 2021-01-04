@@ -9,7 +9,6 @@
 
 import logging
 import json
-import logging
 import datetime
 from dateutil.relativedelta import relativedelta
 from datetime import timedelta
@@ -20,7 +19,6 @@ from odoo import _, api, fields, models
 from odoo.tools import DEFAULT_SERVER_DATETIME_FORMAT
 from odoo.tools import DEFAULT_SERVER_DATE_FORMAT as DF
 
-_logger = logging.getLogger(__name__)
 
 Item_Type = [
     ('product', 'Product'),
@@ -124,7 +122,6 @@ class ConnectorDashboard(models.Model):
 
     @api.model
     def get_connection_info(self):
-        _logger.info('\n\n get_connection_info self %r', self)
         configModel = self.env['connector.instance']
         success = False
         defId = False
@@ -197,8 +194,6 @@ class ConnectorDashboard(models.Model):
             mappedModel = modelName[name][2]
             mappedfieldName = modelName[name][3]
             action = modelName[name][0]
-            _logger.info('\n\n _compute_record_count info %r', 
-                [self, action, name, needOne, needTwo, model, mappedModel, mappedfieldName])
             if action == 1:
                 totalOne = self._get_need_sync_record(mappedModel, instanceId)
                 totalTwo = self._get_no_sync_record(
@@ -208,8 +203,6 @@ class ConnectorDashboard(models.Model):
             elif action == 2:
                 totalInvc, totalNeedInv, totalDlvr, totlaNeedDlvr = self._get_processed_unprocessed_records(
                     instanceId)
-                _logger.info('\n\n _compute_record_count _get_processed_unprocessed_records %r', 
-                    [totalInvc, totalNeedInv, totalDlvr, totlaNeedDlvr])
                 self[0][needOne] = len(totalNeedInv)
                 self[0][needTwo] = len(totlaNeedDlvr)
                 self[0].count_invoiced_records = len(totalInvc)
@@ -220,12 +213,11 @@ class ConnectorDashboard(models.Model):
             
             self[0].count_mapped_records = self._get_mapped_records(
                 mappedModel, instanceId)
-            # _logger.info('\n\n _compute_record_count locals %r', locals())
 
     @api.model
     def _get_mapped_records(self, mappedModel, instanceId):
-        return len(self.env[mappedModel].search(
-            [('instance_id', '=', instanceId)]))
+        return self.env[mappedModel].search_count(
+            [('instance_id', '=', instanceId)])
 
     @api.model
     def _get_need_so_action_record(self, instanceId, needAction):
@@ -322,9 +314,9 @@ class ConnectorDashboard(models.Model):
 
     @api.model
     def _get_need_sync_record(self, mappedModel, instanceId):
-        domain = [('need_sync', '=', "Yes"), ('instance_id', '=', instanceId)]
-        needSyncObjs = self.env[mappedModel].search(domain)
-        return len(needSyncObjs)
+        domain = [('need_sync', '=', True), ('instance_id', '=', instanceId)]
+        needSyncCount = self.env[mappedModel].search_count(domain)
+        return needSyncCount
 
     @api.model
     def _get_no_sync_record(
@@ -448,7 +440,7 @@ class ConnectorDashboard(models.Model):
         self.ensure_one()
         resModel = self._context.get('map_model')
         domain = [('instance_id', '=', self.get_instance()),
-                  ('need_sync', '=', 'Yes')]
+                  ('need_sync', '=', True)]
         recordIds = self.env[resModel].search(domain).ids
         return {
             'name': ('Record'),
@@ -619,36 +611,3 @@ class ConnectorDashboard(models.Model):
             (self.env.ref('bridge_skeleton.connector_instance_form').id, 'form')]
         action['res_id'] = connObj
         return action
-
-    # @api.model
-    # def open_connection_tree(self, connObjs, mode):
-    #     ctx = self._context.copy()
-    #     _logger.info('----ctx-------%r', ctx)
-    #     ctx.pop('group_by', None)
-    #     action = self.env.ref(
-    #         'bridge_skeleton.connector_instance_tree_action').read()[0]
-    #     connFilter = self.env.ref(
-    #         'bridge_skeleton.magento_configure_search', False)
-    #     action['search_view_id'] = connFilter and connFilter.id or False
-    #     action['views'] = [
-    #         (self.env.ref('bridge_skeleton.magento_configure_tree').id, 'tree')]
-    #     ctx[mode] = 1
-    #     action['context'] = ctx
-    #     _logger.info('----action-------%r', action)
-    #     return action
-
-
-
-        # errorCOn = connObjs.filtered(lambda obj: obj.connection_status == False)
-        # domain = [('id', 'in', errorCOn.ids)]
-        # return {
-        #     'name': ('Record'),
-        #     'type': 'ir.actions.act_window',
-        #     # 'view_type': 'form',
-        #     'view_mode': 'tree,form',
-        #     'res_model': 'connector.instance',
-        #     'view_id': False,
-        #     'views' : [(False, 'tree')],
-        #     'domain': domain,
-        #     'target': 'current',
-        # }

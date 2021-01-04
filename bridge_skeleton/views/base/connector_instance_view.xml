@@ -69,7 +69,7 @@
                                             <div class="o_setting_right_pane">
                                                 <label string=" API Password" for="pwd"/>
                                                 <div>
-                                                        <field name="pwd" placeholder="Example: apipassword"/>
+                                                        <field name="pwd" placeholder="Example: apipassword" password="True"/>
                                                 </div>
                                             </div>
                                         </div>
@@ -198,10 +198,55 @@
                                         <div class="col-xs-12 col-md-6 o_setting_box">
                                             <div class="o_setting_left_pane"/>
                                             <div class="o_setting_right_pane">
+                                                <label string="Default Company" for="company_id"/>
+                                                <div>
+                                                    <field name="company_id"/>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6 o_setting_box">
+                                            <div class="o_setting_left_pane"/>
+                                            <div class="o_setting_right_pane">
                                                 <label string="Default Category" for="category"/>
                                                 <div>
                                                     <b><field name="category"
                                                         options="{'no_create' : True}"/></b>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6 o_setting_box">
+                                            <div class="o_setting_left_pane">
+                                                <b><field name="avoid_product_duplicity"/></b>
+                                            </div>
+                                            <div class="o_setting_right_pane">
+                                                <label string="Avoid product duplicity" for="avoid_product_duplicity"/>
+                                                <div class="text-muted">
+                                                    Avoid product duplicity based on sku &amp; barcode
+                                                    during product synchronization from ecomm to odoo.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6 o_setting_box">
+                                            <div class="o_setting_left_pane">
+                                                <b><field name="avoid_category_duplicity"/></b>
+                                            </div>
+                                            <div class="o_setting_right_pane">
+                                                <label string="Avoid category duplicity" for="avoid_category_duplicity"/>
+                                                <div class="text-muted">
+                                                    Avoid category duplicity based on name &amp; parent
+                                                    during category synchronization from ecomm to odoo.
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="col-xs-12 col-md-6 o_setting_box">
+                                            <div class="o_setting_left_pane">
+                                                <b><field name="avoid_attribute_duplicity"/></b>
+                                            </div>
+                                            <div class="o_setting_right_pane">
+                                                <label string="Avoid attribute duplicity" for="avoid_attribute_duplicity"/>
+                                                <div class="text-muted">
+                                                    Avoid attribute &amp; values duplicity based on name
+                                                    during attribute synchronization from ecomm to odoo.
                                                 </div>
                                             </div>
                                         </div>
@@ -273,11 +318,19 @@
             <field name="model">connector.instance</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree string="Connection Instances" class="o_connector_wk">
+                <tree string="Connection Instances" class="o_connector_wk" sample="1">
+                    <field name="instance_name" decoration-bf="1"/>
+                    <field name="ecomm_type" optional="show"/>
                     <field name="name"/>
                     <field name="user"/>
                     <field name="active"/>
+                    <field name="connection_status" invisible='1'/>
+                    <field name="status" widget="badge" decoration-success="connection_status == True" decoration-danger="connection_status == False" optional="show"/>
                     <field name="create_date"/>
+                    <field name="create_uid" widget="many2one_avatar_user"/>
+                    <field name="language" optional="hide"/>
+                    <field name="category" optional="hide"/>
+                    <field name="warehouse_id" optional="hide"/>
                 </tree>
             </field>
         </record>
@@ -287,10 +340,11 @@
             <field name="model">connector.instance</field>
             <field name="arch" type="xml">
                 <search string="Connections">
+                    <field name="ecomm_type"/>
                     <filter string="Inactive Connection" name="inactive" domain="[('active','=',False)]" help="Inactive Connection"/>
                     <filter string="Successful" name="success" domain="[('connection_status','=',True)]" help="Successful Connection"/>
                     <filter string="Error" name="error" domain="[('connection_status','=',False)]" help="Error in Connection"/>
-                    <group expand="0" string="Group By">
+                    <group expand="1" string="Group By">
                         <filter string="Channel" name="group_by_ecomm" context="{'group_by':'ecomm_type'}"/>
                     </group>
                 </search>
@@ -303,9 +357,12 @@
             <field name="view_mode">tree,form</field>
             <field name="context">{"search_default_group_by_ecomm":1}</field>
             <field name="help" type="html">
-                <p class="oe_view_nocontent_create oe_link">
-                    Click to define a new Ecomm connection.
-                </p>
+              <p class="o_view_nocontent_smiling_face">
+                Click to define a new Ecomm connection.
+              </p><p>
+                Odoo Bridge For Ecoom will connect your ecomm like Magento, Prestashop, Opencart, Virtumart etc with odoo. you can sync your ecomm data at odoo end and vice versa.
+                View Details for ecomm and odoo demo, Click on below links.
+              </p>
             </field>
             <field name="view_id" ref="connector_instance_tree"/>
             <field name="search_view_id" ref = "connector_instance_search"/>

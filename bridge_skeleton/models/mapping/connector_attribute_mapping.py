@@ -9,6 +9,7 @@
 
 from odoo import fields, models
 
+
 class ConnectorAttributeMapping(models.Model):
     _name = "connector.attribute.mapping"
     _inherit = ['connector.common.mapping']

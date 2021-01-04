@@ -16,14 +16,14 @@ class StockMove(models.Model):
 	_inherit="stock.move"
 
 	def prestashop_stock_update(self, erp_product_id, warehouse_id):
+		return self.update_quantity_prestashop(erp_product_id,warehouse_id)
+	
+	def update_quantity_prestashop(self,erp_product_id, warehouse_id):
 		ctx = self._context.copy() or {}
-		qty = 0
-		text = ''
-		stock = 0
 		product_pool = self.env['connector.product.mapping']
-		check_mapping = product_pool.sudo().search([('name','=',erp_product_id)],limit=1)
-		if check_mapping and erp_product_id:
-			map_obj = check_mapping[0]
+		check = product_pool.sudo().search([('name','=',erp_product_id)],limit=1)
+		array = [0,'Error in Updating Stock']
+		for map_obj in check:
 			presta_product_id = map_obj.ecomm_id
 			presta_product_attribute_id = map_obj.ecomm_combination_id
 			instance_id = map_obj.instance_id
@@ -41,7 +41,8 @@ class StockMove(models.Model):
 															options={'filter[id_product]':presta_product_id,
 															'filter[id_product_attribute]':presta_product_attribute_id})
 						except Exception as e:
-							return [0,' Unable to search given stock id', check_mapping[0]]
+							array.append([0,' Unable to search given stock id', erp_product_id])
+							continue
 						if type(stock_search['stock_availables']) == dict:
 							if isinstance(stock_search['stock_availables']['stock_available'],list):
 								stock_id = stock_search['stock_availables']['stock_available'][0]['attrs']['id']
@@ -50,14 +51,13 @@ class StockMove(models.Model):
 							try:
 								stock_data = prestashop.get('stock_availables', stock_id)
 							except Exception as e:
-								return [0,' Error in Updating Quantity,can`t get stock_available data.',check_mapping[0]]
+								array.append([0,' Error in Updating Quantity,can`t get stock_available data.',erp_product_id])
 							stock_data['stock_available']['quantity'] = int(product_qty)
 							try:
 								up = prestashop.edit('stock_availables', stock_id, stock_data)
 							except:
-								  pass
-							return [1,'']
+								array.append([0,' Error in Updating Quantity,can`t get stock_available data.',erp_product_id])
+							array.append([1,''])
 				else:
-					return [0,'Error in Connection with Prestashop']
-		else:
-			return [0 , False]
+					array.append([0 , 'Error in Connection with Prestashop',erp_product_id])
+		return array

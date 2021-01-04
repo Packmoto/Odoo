@@ -8,8 +8,7 @@
 ##########################################################################
 
 from odoo import fields, api, models
-import logging
-_logger = logging.getLogger(__name__)
+
 
 class ConnectorTemplateMapping(models.Model):
     _name = "connector.template.mapping"
@@ -46,36 +45,25 @@ class ConnectorTemplateMapping(models.Model):
             domain = [('product_tmpl_id', '=', template_id)]
             if 'values' in data:
                 value_ids = []
-                prod_attr_price_model = self.env['product.template.attribute.value']
+                price_val_dict = {}
                 for value in data.get('values', {}):
                     value_id = value.get('value_id', 0)
                     value_ids.append(value_id)
-                    # if value.get('price_extra'):
-                    #     price_extra = value['price_extra']
-                    #     search_domain = domain + [('product_attribute_value_id', '=', value_id)]
-                    #     attr_price_objs = prod_attr_price_model.search(search_domain)
-                    #     if attr_price_objs:
-                    #         for attr_price_obj in attr_price_objs:
-                    #             attr_price_obj.write({'price_extra': price_extra})
-                    #     else:
-                    #         attr_price_dict = {
-                    #             'product_tmpl_id' : template_id,
-                    #             'product_attribute_value_id' : value_id,
-                    #             'price_extra' : price_extra,
-                    #         }
-                    #         prod_attr_price_model.create(attr_price_dict)
+                    price_val_dict[value_id] = value.get('price_extra', 0.0)
                 line_dict['value_ids'] = [(6, 0, value_ids)]
             search_domain = domain + [('attribute_id', '=', attribute_id)]
             prod_attr_line_model = self.env['product.template.attribute.line']
             exist_attr_line_objs = prod_attr_line_model.search(search_domain)
             if exist_attr_line_objs:
                 for exist_attr_line_obj in exist_attr_line_objs:
-                    exist_attr_line_obj.with_context({'update_product_template_attribute_values':False}).write(line_dict)
+                    exist_attr_line_obj.write(line_dict)
             else:
                 line_dict.update({
                     'attribute_id' : attribute_id,
                     'product_tmpl_id' : template_id
                 })
-                a = prod_attr_line_model.create(line_dict)
+                attribute_line_obj = prod_attr_line_model.create(line_dict)
+                for valueObj in attribute_line_obj.product_template_value_ids:
+                    valueObj.price_extra = price_val_dict.get(valueObj.product_attribute_value_id.id, 0.0)
             return True
         return False

@@ -49,6 +49,8 @@ class ConnectorSnippet(models.TransientModel):
                 response = getattr(self, 'create_%s_product_attribute' % channel)(name, odoo_id, connection, ecomm_attribute_code)
                 if response.get('status', False):
                     ecomm_id = response.get('ecomm_id', 0)
+                    if response.get('ecomm_attribute_code'):
+                        ecomm_attribute_code = response.get('ecomm_attribute_code')
                     if ecomm_id:
                         self.create_odoo_connector_mapping('connector.attribute.mapping', ecomm_id, odoo_id, instance_id, ecomm_attribute_code=ecomm_attribute_code)
                         self.create_ecomm_connector_mapping('connector.attribute.mapping', channel, {'ecomm_id':ecomm_id, 'odoo_id':odoo_id, 'name':ecomm_attribute_code, 'created_by': 'odoo'}, connection)

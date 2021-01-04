@@ -16,10 +16,7 @@ class ConnectorCommonMapping(models.AbstractModel):
 
     odoo_id = fields.Integer(string='Odoo Id')
     ecomm_id = fields.Integer(string='Ecomm Id')
-    need_sync = fields.Selection([
-        ('Yes', 'Yes'),
-        ('No', 'No')
-    ], string='Update Required', default='No')
+    need_sync = fields.Boolean(string='Update Required', default=False)
     instance_id = fields.Many2one(
         'connector.instance', string='Connector Instance')
     ecommerce_channel = fields.Selection(

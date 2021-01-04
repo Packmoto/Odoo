@@ -18,6 +18,7 @@
                         <field name="ecomm_id" readonly="1" />
                         <field name="odoo_id" readonly="1"/>
                         <field name="is_variants" readonly="1"/>
+                        <field name="need_sync" widget="boolean_toggle"/>
                     </group>
                 </form>
             </field>
@@ -29,18 +30,18 @@
             <field name="model">connector.template.mapping</field>
             <field name="type">tree</field>
             <field name="arch" type="xml">
-                <tree create="false" string="Ecomm Product Templates"  decoration-danger="need_sync=='Yes'" >
-                    <field name="id"/>
+                <tree create="false" string="Ecomm Product Templates"  decoration-danger="need_sync==True" >
+                    <field name="id" optional="hide"/>
                     <field name="name"/>
                     <field name="odoo_id"/>
                     <field name="ecomm_id"/>
                     <field name="is_variants"/>
-                    <field name="instance_id" readonly="1"/>
-                    <field name="ecommerce_channel" readonly="1"/>
-                    <field name="created_by" readonly="1"/>
-                    <field name="create_date" readonly="1"/>
-                    <field name="write_date" readonly="1"/>
-                    <field name="need_sync"/>
+                    <field name="instance_id" optional="show"/>
+                    <field name="ecommerce_channel" readonly="1" optional="hide"/>
+                    <field name="created_by" readonly="1" optional="show"/>
+                    <field name="create_date" readonly="1" optional="show"/>
+                    <field name="write_date" readonly="1" optional="hide"/>
+                    <field name="need_sync" widget="boolean_toggle"/>
                 </tree>
             </field>
         </record>
@@ -59,8 +60,12 @@
                             <filter string="Is Variants" name="isvariants" domain="[]" context="{'group_by':'is_variants'}" />
                             <filter string="Need Sync" name="needsync" domain="[]" context="{'group_by':'need_sync'}" />
                             <filter string="Created By" name="createby" domain="[]" context="{'group_by':'created_by'}" />
+                            <filter string="Sync Date" name="group_by_create_date" domain="[]" context="{'group_by': 'create_date'}"/>
                         </group>
                         <filter name="variants" string="Multi Variant Products" icon="terp-project" domain="[('is_variants','=','True')]" />
+                        <searchpanel>
+                            <field name="instance_id" string="Instances" enable_counters="1"/>
+                        </searchpanel>
                     </search>
                 </field>
         </record>
@@ -71,7 +76,7 @@
             <field name="view_mode">tree,form</field>
             <field name="view_id" ref="connector_product_template_tree"/>
             <field name="search_view_id" ref = "connector_product_template_search"/>
-            <field name="context">{"search_default_group_by_ecomm":1,"search_default_group_by_instance":1,"search_default_variants":True}</field>
+            <field name="context">{"search_default_variants":True}</field>
         </record>
 
     </data>

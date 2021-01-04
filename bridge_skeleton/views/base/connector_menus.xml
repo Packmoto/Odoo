@@ -8,7 +8,8 @@
 
         <!--     Connector Menu      -->
         <menuitem   id="connector_parent_menu" 
-                    name="Ecomm Odoo Bridge" groups="bridge_skeleton.group_connector_manager"/>
+                    name="Ecomm Odoo Bridge" groups="bridge_skeleton.group_connector_manager"
+                    web_icon="bridge_skeleton,static/description/icon.png"/>
                 <menuitem   id="menu_connector_dash" 
                             name="Dashboard" parent="bridge_skeleton.connector_parent_menu"
                             action="bridge_skeleton.open_connector_dashboard_kanban" sequence="1"/>

@@ -7,17 +7,15 @@
 #
 ##########################################################################
 
-import logging
 from odoo import api, models
 
-_logger = logging.getLogger(__name__)
 
-class account_payment(models.Model):
-    _inherit = "account.payment"
+class AccountMove(models.Model):
+    _inherit = "account.move"
 
-    def post(self):
+    def action_invoice_paid(self):
         self.skeleton_pre_payment_post()
-        res = super().post()
+        res = super().action_invoice_paid()
         self.skeleton_after_payment_post(res)
         return res
 
@@ -35,9 +33,7 @@ class account_payment(models.Model):
         ecomm_cannels = dict(snippet_obj._get_ecomm_extensions()).keys()
         if any(key in ctx for key in ecomm_cannels):
             return True
-        for rec in self:
-            origins = rec.invoice_ids.mapped('invoice_origin')
-            sales_order = self.env['sale.order'].search([('name', 'in', origins)])
-            for ecomm in ecomm_cannels:
-                response = snippet_obj.manual_connector_order_operation('invoice', ecomm, sales_order)
+        for move in self:
+            for sales_order in move.invoice_line_ids.mapped('sale_line_ids').mapped('order_id'):
+                snippet_obj.manual_connector_order_operation('invoice', sales_order.ecommerce_channel, sales_order)
         return True

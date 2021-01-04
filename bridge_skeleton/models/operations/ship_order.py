@@ -56,7 +56,7 @@ class WkSkeleton(models.TransientModel):
         except Exception as e:
             status = False
             status_message = "Error in Delivering Order: %s" % str(e)
-            _logger.info('## Exception set_order_shipped(%s) : %s' % (orderId, status_message))
+            _logger.debug('## Exception set_order_shipped(%s) : %s' % (orderId, status_message))
         finally:
             return {
                 'status_message': status_message,

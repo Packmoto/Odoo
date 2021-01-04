@@ -7,11 +7,12 @@
 #
 ##########################################################################
 
-from odoo import api, models
-
 import logging
 
+from odoo import api, models
+
 _logger = logging.getLogger(__name__)
+
 
 class WkSkeleton(models.TransientModel):
     _name = "wk.skeleton"
@@ -91,7 +92,7 @@ class WkSkeleton(models.TransientModel):
             status = False
             status_message = "Odoo Order %s Not cancelled. Reason: %s" % (
                 saleObj.name, str(e))
-            _logger.info('#Exception set_order_cancel for sale.order(%s) : %s' % (order_id, status_message))
+            _logger.debug('#Exception set_order_cancel for sale.order(%s) : %s' % (order_id, status_message))
         finally:
             return {
                 'status_message': status_message,
@@ -153,7 +154,7 @@ class WkSkeleton(models.TransientModel):
             self.create_order_mapping(mapping_data)
         except Exception as e:
             status_message = "Error in creating order on Odoo: %s" % str(e)
-            _logger.info('#Exception create_order : %r', status_message)
+            _logger.debug('#Exception create_order : %r', status_message)
             status = False
         finally:
             return {
@@ -179,7 +180,7 @@ class WkSkeleton(models.TransientModel):
             saleObj.action_confirm()
         except Exception as e:
             status_message = "Error in Confirming Order on Odoo: %s" % str(e)
-            _logger.info('#Exception confirm_odoo_order for sale.order(%s) : %s' % (order_id, status_message))
+            _logger.debug('#Exception confirm_odoo_order for sale.order(%s) : %s' % (order_id, status_message))
             status = False
         finally:
             return {

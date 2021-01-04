@@ -17,7 +17,7 @@
 
 {
     'name': 'POB - PrestaShop-Odoo Bridge',
-    'version': '5.1.2',
+    'version': '6.0.0',
     'author': 'Webkul Software Pvt. Ltd.',
     'summary': 'Bi-directional synchronization with PrestaShop',
     'description': """
@@ -58,4 +58,5 @@ For any doubt or query email us at support@webkul.com or raise a Ticket on http:
     'application': True,
     'auto_install': False,
     "external_dependencies":  {'python': ['requests']},
+    "pre_init_hook": 'pre_init_check',
 }

@@ -9,11 +9,6 @@ _logger = logging.getLogger(__name__)
 
 class ConnectorInstance(models.Model):
     _inherit = 'connector.instance'
-
-
-
-    is_barcode = fields.Boolean(string='Check Barcode code')
-    is_reference = fields.Boolean(string='Check Default code')
     
     @api.model
     def _get_list(self):
@@ -129,12 +124,14 @@ class ConnectorInstance(models.Model):
         instance_id = self._context.get('instance_id', False)
         prestashop = False
         ps_lang_id = 0
+        notify = False
         if instance_id:
             try:
                 instance_obj = self.browse(instance_id)
                 prestashop = PrestaShopWebServiceDict(instance_obj.user,instance_obj.pwd)
                 languages = prestashop.get("languages",options={'filter[active]':'1'})
                 ps_lang_id = instance_obj.ps_language_id or 0
+                notify = instance_obj.notify
                 status = True
             except Exception as e:
                 raise Warning(" Problem in Connecting with prestashop " + str(e))
@@ -146,6 +143,7 @@ class ConnectorInstance(models.Model):
         return {
             'status' : status,
             'prestashop' : prestashop,
-            'ps_lang_id' : ps_lang_id
+            'ps_lang_id' : ps_lang_id,
+            'notify' : notify
         }
         

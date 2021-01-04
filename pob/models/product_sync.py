@@ -378,6 +378,7 @@ class ConnectorSnippet(models.TransientModel):
 					presta_dim_list.append({'id':str(m_id[0].ecomm_id)})
 				else:
 					raise Warning('Please Map All Dimentions(Attributes and Attribute Values) First And than Try To Update Product')
+			combination_schema['combination']['associations']['product_option_values']={}
 			combination_schema['combination']['associations']['product_option_values']['product_option_value'] = presta_dim_list
 			combination_schema['combination'].update({
 									'ean13':obj_pro.barcode or '',
@@ -425,7 +426,6 @@ class ConnectorSnippet(models.TransientModel):
 				for j in extra_categ_objs[0].categ_ids:
 					ps_ex_cat_id = self.sync_categories(j , instance_id, channel, connection )
 					ps_extra_categ.append({'id':str(ps_ex_cat_id)})
-			# product_data['product'].update({'id_category_default':ps_categ_id})
 			if ps_extra_categ:
 				a2 = product_data['product']['associations']['categories']['category'] = ps_extra_categ
 		return{

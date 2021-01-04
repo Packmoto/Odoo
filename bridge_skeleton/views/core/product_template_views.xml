@@ -21,13 +21,14 @@
                         </tree>
                     </field>
                     <field name="config_sku" attrs="{'invisible':[('product_variant_count', '&lt;=', 1)]}"/>
+                    <field name="config_barcode" attrs="{'invisible':[('product_variant_count', '&lt;=', 1)]}"/>
                     <separator string="Ecommerce Mapping" colspan="2"/>
-                    <field name="connector_mapping_ids" readonly='1' nolabel='1'/>
+                    <field name="connector_mapping_ids" create='false' nolabel='1'/>
                 </page>
             </notebook>
         </field>
     </record>
-
+    
     <record id="ecomm_product_template_combiantion_form_view" model="ir.ui.view">
         <field name="name">product.template.form.view.inherit</field>
         <field name="model">product.template</field>
@@ -44,7 +45,5 @@
             </xpath>
         </field>
     </record>
-
-
 
 </odoo>

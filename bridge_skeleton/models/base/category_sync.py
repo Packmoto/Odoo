@@ -32,7 +32,7 @@ class ConnectorSnippet(models.TransientModel):
             action = 'c'
             success_ids, failed_ids, updted_category_mapping_ids = self._update_specific_category(exp_category_objs, channel, instance_id, connection)
             if success_ids:
-                self.update_odoo_mapping('connector.category.mapping', updted_category_mapping_ids, {'need_sync':'No'})
+                self.update_odoo_mapping('connector.category.mapping', updted_category_mapping_ids, {'need_sync':False})
         if success_ids:
             text = "\nThe Listed category ids {} has been {} on {}.".format(sorted(success_ids), sync_opr, channel)
             response_text = "{}\n {}".format(response_text, text)

@@ -6,7 +6,7 @@
 <odoo>
     <data>
 
-        <!--====================	Synchronization History ==================-->
+        <!--====================    Synchronization History ==================-->
 
         <record id="connector_sync_history_form" model="ir.ui.view">
             <field name="name">connector.sync.history.form</field>
@@ -47,6 +47,7 @@
             <field name="model">connector.sync.history</field>
             <field name="arch" type="xml">
                 <search string="History">
+                    <field name="action_on"/>
                     <group expand="0" string="Group By">
                         <filter string="Channel" name="group_by_ecomm" context="{'group_by':'ecommerce_channel'}"/>
                         <filter string="Instance" name="group_by_instance" context="{'group_by':'instance_id'}"/>

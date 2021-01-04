@@ -7,30 +7,71 @@
     <data noupdate="0">
         <!-- ####################################  SERVER ACTIONS  ###################################### -->
 
-                    <!--~~~~~~~ Server action for update product mapping ~~~~~~~~~-->
-
-        <record id="action_change_product_update_status" model="ir.actions.server">
-            <field name="name">Change Update Status</field>
+        <record id="action_product_mapping_enable_needsync" model="ir.actions.server">
+            <field name="name">Enable Need Sync</field>
             <field name="model_id" ref="bridge_skeleton.model_connector_product_mapping"/>
             <field name="state">code</field>
-            <field name="code">action = env["mapping.update"].open_update_wizard()</field>
+            <field name="code">
+active_ids = env.context.get('active_ids')
+env["connector.product.mapping"].browse(active_ids).write({'need_sync':True})
+<!-- action = env['message.wizard'].genrated_message("Need sync of the selected records is enabled.") -->
+            </field>
             <field name="binding_model_id" ref="bridge_skeleton.model_connector_product_mapping"/>
         </record>
 
-        <record id="action_change_template_update_status" model="ir.actions.server">
-            <field name="name">Change Update Status</field>
-            <field name="model_id" ref="bridge_skeleton.model_connector_template_mapping"/>
+        <record id="action_product_mapping_disable_needsync" model="ir.actions.server">
+            <field name="name">Disable Need Sync</field>
+            <field name="model_id" ref="bridge_skeleton.model_connector_product_mapping"/>
+            <field name="binding_model_id" ref="bridge_skeleton.model_connector_product_mapping"/>
             <field name="state">code</field>
-            <field name="code">action = env["mapping.update"].open_update_wizard()</field>
-            <field name="binding_model_id" ref="bridge_skeleton.model_connector_template_mapping"/>
+            <field name="code">
+active_ids = env.context.get('active_ids')
+env["connector.product.mapping"].browse(active_ids).write({'need_sync':False})
+            </field>
         </record>
 
-        <record id="action_change_category_update_status" model="ir.actions.server">
-            <field name="name">Change Update Status</field>
-            <field name="model_id" ref="bridge_skeleton.model_connector_category_mapping"/>
+        <record id="action_template_mapping_enable_needsync" model="ir.actions.server">
+            <field name="name">Enable Need Sync</field>
+            <field name="model_id" ref="bridge_skeleton.model_connector_template_mapping"/>
+            <field name="binding_model_id" ref="bridge_skeleton.model_connector_template_mapping"/>
             <field name="state">code</field>
-            <field name="code">action = env["mapping.update"].open_update_wizard()</field>
+            <field name="code">
+active_ids = env.context.get('active_ids')
+env["connector.product.mapping"].browse(active_ids).write({'need_sync':True})
+            </field>
+        </record>
+
+        <record id="action_template_mapping_disable_needsync" model="ir.actions.server">
+            <field name="name">Disable Need Sync</field>
+            <field name="model_id" ref="bridge_skeleton.model_connector_template_mapping"/>
+            <field name="binding_model_id" ref="bridge_skeleton.model_connector_template_mapping"/>
+            <field name="state">code</field>
+            <field name="code">
+active_ids = env.context.get('active_ids')
+env["connector.template.mapping"].browse(active_ids).write({'need_sync':False})
+            </field>
+        </record>
+
+        <record id="action_category_mapping_enable_needsync" model="ir.actions.server">
+            <field name="name">Enable Need Sync</field>
+            <field name="model_id" ref="bridge_skeleton.model_connector_category_mapping"/>
             <field name="binding_model_id" ref="bridge_skeleton.model_connector_category_mapping"/>
+            <field name="state">code</field>
+            <field name="code">
+active_ids = env.context.get('active_ids')
+env["connector.product.mapping"].browse(active_ids).write({'need_sync':True})
+            </field>
+        </record>
+
+        <record id="action_category_mapping_disable_needsync" model="ir.actions.server">
+            <field name="name">Disable Need Sync</field>
+            <field name="model_id" ref="bridge_skeleton.model_connector_category_mapping"/>
+            <field name="binding_model_id" ref="bridge_skeleton.model_connector_category_mapping"/>
+            <field name="state">code</field>
+            <field name="code">
+active_ids = env.context.get('active_ids')
+env["connector.template.mapping"].browse(active_ids).write({'need_sync':False})
+            </field>
         </record>
 
         <record id="action_sync_category_bulk" model="ir.actions.server">

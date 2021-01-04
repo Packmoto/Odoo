@@ -9,7 +9,7 @@
 
 from . import sale
 from . import res_partner
-from . import account_payment
+from . import account_move
 from . import stock_move
 from . import stock_picking
 from . import delivery_carrier

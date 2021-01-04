@@ -16,7 +16,6 @@ from . import order_status_compare
 from . import prestapi
 from . import prestashop_mapping
 from . import product
-from . import product_template
 from . import product_sync
 from . import stock_move
 from . import stock_picking
